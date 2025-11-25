@@ -1,6 +1,7 @@
 import { ProductGrid } from "@/components/products/product-grid";
 import { getCategories, getProducts } from "@/lib/api";
 import type { Product } from "@/lib/types";
+import { fallbackProducts } from "@/data/fallback-products";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -15,6 +16,14 @@ export default async function HomePage() {
     categories = c;
   } catch (error) {
     console.error("加载首页数据失败：", error);
+  }
+
+  if (products.length === 0) {
+    products = fallbackProducts;
+  }
+
+  if (categories.length === 0) {
+    categories = Array.from(new Set(products.map((product) => product.category)));
   }
 
   return (
