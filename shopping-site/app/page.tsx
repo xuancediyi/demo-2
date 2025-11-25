@@ -1,11 +1,21 @@
 import { ProductGrid } from "@/components/products/product-grid";
 import { getCategories, getProducts } from "@/lib/api";
+import type { Product } from "@/lib/types";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function HomePage() {
-  const [products, categories] = await Promise.all([
-    getProducts(),
-    getCategories(),
-  ]);
+  let products: Product[] = [];
+  let categories: string[] = [];
+
+  try {
+    const [p, c] = await Promise.all([getProducts(), getCategories()]);
+    products = p;
+    categories = c;
+  } catch (error) {
+    console.error("加载首页数据失败：", error);
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
